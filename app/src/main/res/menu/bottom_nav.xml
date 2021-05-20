@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/home"
+        android:icon="@drawable/ic_baseline_face_24"
+        android:enabled="true"
+        android:title="friend_list" />
+    <item
+        android:id="@+id/list"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_chat_bubble_outline_24"
+        android:title="chat_list" />
+    <item
+        android:id="@+id/form"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_more_horiz_24"
+        android:title="etc" />
+
+</menu>
