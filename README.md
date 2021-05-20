@@ -1,1 +1,1 @@
-# chatProject
+# android chatting app
