@@ -47,7 +47,7 @@
         android:layout_below="@id/barLayout_message_chat"
         android:background="#fff"/>
     <RelativeLayout
-        android:background="#FBFDEE"
+        android:background="#E5E6DD"
         android:id="@+id/relative_layout_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

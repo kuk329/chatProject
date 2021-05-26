@@ -20,17 +20,7 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        // custom toolbar
 
-//        val toolbar : Toolbar = findViewById(R.id.)
-//        setSupportActionBar(toolbar)
-//        supportActionBar!!.title="Register"
-//        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-//        toolbar.setNavigationOnClickListener {
-//            val intent = Intent(this,WelcomeActivity::class.java)
-//            startActivity(intent)
-//            finish()
- //       }
         mAuth = FirebaseAuth.getInstance()
 
         // 회원가입 버튼 클릭시

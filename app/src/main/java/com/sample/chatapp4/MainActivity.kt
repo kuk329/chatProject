@@ -3,6 +3,9 @@ package com.sample.chatapp4
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
@@ -81,4 +84,30 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         return currentNavController?.value?.navigateUp() ?: false
     }
+//
+//    internal class ViewPagerAdapter(fragmentManager:FragmentManager):
+//        FragmentPagerAdapter(fragmentManager){
+//        private val fragments:ArrayList<Fragment>
+//        private val titles:ArrayList<String>
+//        init{
+//            fragments = ArrayList<Fragment>()
+//            titles = ArrayList<String>()
+//        }
+//        override fun getCount(): Int {
+//            return fragments.size
+//        }
+//
+//        override fun getItem(position: Int): Fragment {
+//           return fragments[position]
+//        }
+//        fun addFragment(fragment:Fragment,title:String){
+//            fragments.add(fragment)
+//            titles.add(title)
+//        }
+//
+//        override fun getPageTitle(i: Int): CharSequence? {
+//            return titles[i]
+//        }
+//
+//    }
 }

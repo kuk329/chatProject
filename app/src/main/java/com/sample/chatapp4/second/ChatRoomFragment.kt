@@ -44,4 +44,4 @@ class ChatRoomFragment : Fragment() {
         //view.findViewById<TextView>(R.id.profile_user_name).text = name
         return view
     }
-}
+}// x

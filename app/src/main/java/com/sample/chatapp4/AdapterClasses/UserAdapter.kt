@@ -1,14 +1,19 @@
 package com.sample.chatapp4.AdapterClasses
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.sample.chatapp4.LoginActivity
 import com.sample.chatapp4.ModelClasses.Users
 import com.sample.chatapp4.R
+import com.sample.chatapp4.second.MessageChatActivity
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_friend_list.view.*
@@ -50,23 +55,46 @@ class UserAdapter(
 
         holder.userNameTxt.text=  mUsers[position]!!.getUserName()
 
-        Log.d("test33","이름:"+ mUsers[position].getUserName())
-        Log.d("test33","이름:"+ mUsers[position].getProfile())
-
-        Log.d("test33","위치: "+position)
-        Log.d("test33","tsd"+mUsers[0])
-        Log.d("test33","tsd"+mUsers[1])
-        Log.d("test33","tsd"+mUsers[2])
-        Log.d("test33","last!!"+user.toString())
-        Log.d("test33","last!!"+user.getProfile())
-        Log.d("test33","last!!"+user.getUserName())
-        Log.d("test33","last!!"+user.getInstagram())
+//        Log.d("test33","이름:"+ mUsers[position].getUserName())
+//        Log.d("test33","이름:"+ mUsers[position].getProfile())
+//
+//        Log.d("test33","위치: "+position)
+//        Log.d("test33","tsd"+mUsers[0])
+//        Log.d("test33","tsd"+mUsers[1])
+//        Log.d("test33","tsd"+mUsers[2])
+//        Log.d("test33","last!!"+user.toString())
+//        Log.d("test33","last!!"+user.getProfile())
+//        Log.d("test33","last!!"+user.getUserName())
+//        Log.d("test33","last!!"+user.getInstagram())
 
 
 
         Log.d("test22","user.getPorfile()"+ mUsers[position].getProfile())
         //Picasso.get().load( mUsers[position].getProfile()).placeholder(R.drawable.profile_img).into(holder.profileImageView)
         //Log.d("test22","사진 url:"+text)
+
+        holder.itemView.setOnClickListener {
+            val options = arrayOf<CharSequence>(
+                "Send Message",
+                "Visit Profile"
+            )
+            val builder : AlertDialog.Builder = AlertDialog.Builder(mContext)
+            builder.setTitle("What do you want?")
+            builder.setItems(options,DialogInterface.OnClickListener{dialog, position ->
+                if(position == 0){
+                    val intent = Intent(mContext, MessageChatActivity::class.java)
+                    // 액티비티 프레임에서 제거 (BACK버튼 눌렀을때 되돌아 오지 않도록)
+                    intent.putExtra("visit_id",user.getUID())
+                    mContext.startActivity(intent)
+
+                }
+                if(position == 1){
+
+
+
+                }
+            })
+        }
 
     }
 

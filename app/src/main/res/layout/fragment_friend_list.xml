@@ -10,6 +10,7 @@
     android:orientation="vertical"
     tools:context="com.sample.chatapp4.firstscreen.FriendListFragment"
     tools:layout_editor_absoluteY="81dp">
+
  <androidx.constraintlayout.widget.ConstraintLayout
      android:layout_width="match_parent"
      android:layout_height="wrap_content">
@@ -57,6 +58,14 @@
          tools:text="10,000 pts"
          android:layout_marginLeft="8dp" />
  </androidx.constraintlayout.widget.ConstraintLayout>
+    <View
+        android:layout_marginTop="15px"
+        android:layout_marginBottom="15px"
+        android:background="#C1C5C1"
+        android:layout_height="2px"
+        android:layout_width="match_parent"/>
+
+
 
     <!-- TODO: Update blank fragment layout -->
     <androidx.recyclerview.widget.RecyclerView
