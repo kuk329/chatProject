@@ -2,6 +2,8 @@ package com.sample.chatapp4
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextView
+import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -16,12 +18,14 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.sample.chatapp4.ModelClasses.Users
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.fragment_setting_profile.view.*
 
 class MainActivity : AppCompatActivity() {
 
     var refUsers : DatabaseReference? = null
     var firebaseUser : FirebaseUser? = null
     private var currentNavController: LiveData<NavController>? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,27 +36,31 @@ class MainActivity : AppCompatActivity() {
             Log.d("tag","bottomNav 세팅")
         } // Else, need to wait for onRestoreInstanceState
 
-//        firebaseUser = FirebaseAuth.getInstance().currentUser
-////        refUsers = FirebaseDatabase.getInstance("https://messengerapp-45874-default-rtdb.firebaseio.com/").reference.child("Users").child(firebaseUser!!.uid)
-////
+        firebaseUser = FirebaseAuth.getInstance().currentUser
+        refUsers = FirebaseDatabase.getInstance("https://messengerapp-45874-default-rtdb.firebaseio.com/").reference.child("Users").child(firebaseUser!!.uid)
+
+
 ////        // display username and profile picture
-////        refUsers!!.addValueEventListener(object : ValueEventListener{
-////
-////            override fun onDataChange(p0: DataSnapshot) {
-////                if(p0.exists())
-////                {
-////                    val user: Users? = p0.getValue(Users::class.java)
-////                    사용자 이름아이디.text = user!!.getUserName()
-////                    Picasso.get().load(user.getProfile()).placeholder(R.drawable.profile_img).into(image아이디)
-////
-////
-////                }
-////
-////            }
-////            override fun onCancelled(p0: DatabaseError) {
-////
-////            }
-////        })
+        refUsers!!.addValueEventListener(object : ValueEventListener{
+
+            override fun onDataChange(p0: DataSnapshot) {
+                if(p0.exists())
+                {
+                    val user: Users? = p0.getValue(Users::class.java)
+                    Log.d("mainactivity",""+user)
+                    if (user != null) {
+                        Log.d("mainactivity","1"+user.getUserName())
+                    }
+
+
+
+                }
+
+            }
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+        })
 
     }// end of onCreate()
 
@@ -84,30 +92,5 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         return currentNavController?.value?.navigateUp() ?: false
     }
-//
-//    internal class ViewPagerAdapter(fragmentManager:FragmentManager):
-//        FragmentPagerAdapter(fragmentManager){
-//        private val fragments:ArrayList<Fragment>
-//        private val titles:ArrayList<String>
-//        init{
-//            fragments = ArrayList<Fragment>()
-//            titles = ArrayList<String>()
-//        }
-//        override fun getCount(): Int {
-//            return fragments.size
-//        }
-//
-//        override fun getItem(position: Int): Fragment {
-//           return fragments[position]
-//        }
-//        fun addFragment(fragment:Fragment,title:String){
-//            fragments.add(fragment)
-//            titles.add(title)
-//        }
-//
-//        override fun getPageTitle(i: Int): CharSequence? {
-//            return titles[i]
-//        }
-//
-//    }
+
 }

@@ -23,7 +23,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.sample.chatapp4.R
-import com.sample.chatapp4.firstscreen.MyAdapter2.Companion.USERNAME_KEY
+//import com.sample.chatapp4.firstscreen.MyAdapter2.Companion.USERNAME_KEY
 
 
 class FriendProfileFragment : Fragment() {
@@ -34,8 +34,8 @@ class FriendProfileFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_friend_profile, container, false)
 
-        val name = arguments?.getString(USERNAME_KEY) ?: "알수없는 사용자"
-        view.findViewById<TextView>(R.id.user_name).text = name
+       // val name = arguments?.getString(USERNAME_KEY) ?: "알수없는 사용자"
+       // view.findViewById<TextView>(R.id.user_name).text = name
         return view
     }
 }// end of About class

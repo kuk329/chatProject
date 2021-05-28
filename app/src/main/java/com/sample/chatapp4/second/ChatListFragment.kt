@@ -41,8 +41,7 @@ class ChatListFragment : Fragment() {
         val viewAdapter = MyAdapter(Array(10) { "채팅 ${it + 1}" })
 
         view.findViewById<RecyclerView>(R.id.leaderboard_list).run {
-            // use this setting to improve performance if you know that changes
-            // in content do not change the layout size of the RecyclerView
+
             setHasFixedSize(true)
 
             // specify an viewAdapter (see also next example)
@@ -55,28 +54,28 @@ class ChatListFragment : Fragment() {
 }
 
 class MyAdapter(private val myDataset: Array<String>) :
-    RecyclerView.Adapter<MyAdapter.ViewHolder>() {
+    RecyclerView.Adapter<MyAdapter.ViewHolder2>() {
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder.
     // Each data item is just a string in this case that is shown in a TextView.
-    class ViewHolder(val item: View) : RecyclerView.ViewHolder(item)
+    class ViewHolder2(val item: View) : RecyclerView.ViewHolder(item)
 
 
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(parent: ViewGroup,
-                                    viewType: Int): ViewHolder {
+                                    viewType: Int): ViewHolder2 {
         // create a new view
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.list_view_item, parent, false)
 
 
-        return ViewHolder(itemView)
+        return ViewHolder2(itemView)
     }
 
     // Replace the contents of a view (invoked by the layout manager)
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder2, position: Int) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.item.findViewById<TextView>(R.id.user_name_text).text = myDataset[position]
@@ -101,11 +100,3 @@ class MyAdapter(private val myDataset: Array<String>) :
     }
 }
 
-private val listOfAvatars = listOf(
-    R.drawable.avatar_1_raster,
-    R.drawable.avatar_2_raster,
-    R.drawable.avatar_3_raster,
-    R.drawable.avatar_4_raster,
-    R.drawable.avatar_5_raster,
-    R.drawable.avatar_6_raster
-)

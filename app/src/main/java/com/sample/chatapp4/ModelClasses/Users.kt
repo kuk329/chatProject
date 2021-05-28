@@ -1,5 +1,7 @@
 package com.sample.chatapp4.ModelClasses
 
+import android.util.Log
+
 class Users
 {
     private  var uid: String = ""
@@ -38,12 +40,14 @@ class Users
 
 
     fun getUID(): String?{
+        Log.d("user","getuid")
         return uid
     }
     fun setUID(uid:String){
         this.uid = uid
     }
     fun getUserName(): String?{
+        Log.d("user","username")
         return username
     }
     fun setUserName(username:String){

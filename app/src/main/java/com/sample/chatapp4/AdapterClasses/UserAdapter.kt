@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.fragment_friend_list.view.*
 
 class UserAdapter(
     mContext: Context,
-    mUsers: List<Users>,
+    mUsers: ArrayList<Users>,
     isChatCheck : Boolean
     ) : RecyclerView.Adapter<UserAdapter.ViewHolder?>()
 {
@@ -32,88 +32,81 @@ class UserAdapter(
         this.mUsers= mUsers
         this.mContext =mContext
         this.isChatCheck = isChatCheck
+        Log.d("adapter","초기화")
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view: View = LayoutInflater.from(mContext).inflate(R.layout.user_search_item,parent,false)
+        val view: View = LayoutInflater.from(mContext).inflate(R.layout.list_friend_item,parent,false)
+        Log.d("adapter","onCreateViewHolder")
+
         return ViewHolder(view)
     }
 
     override fun getItemCount(): Int {
+        Log.d("adapter","getItemCount")
         return mUsers.size
 
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
+
+        holder.userNameTxt.setText(mUsers.get(position).getUserName())
+
+
+
+        Log.d("adapter","onBindViewHolder")
+        Log.d("dddd",""+mUsers)
         val user: Users = mUsers[position]
-        Log.d("test33","mUser: "+mUsers.toString())
-//        Log.d("test33","getProfile: "+user.getProfile())
-//        Log.d("test33","getUserName: "+user.getUserName())
-//        Log.d("test33","getCover: "+user.getCover())
-//        Log.d("test33","getFacebook: "+user.getFacebook())
-//        Log.d("test33","getInstagram: "+user.getInstagram())
+        Log.d("adapter1",""+user)
+//        holder.userNameTxt.text=  mUsers[position]!!.getUserName()
 
-        holder.userNameTxt.text=  mUsers[position]!!.getUserName()
+        Log.d("adapter2",""+user.getUID())
+        Log.d("adapter3",""+user.getUserName())
+        Log.d("mainactivity","2"+user.getUserName())
+        Picasso.get().load(user.getProfile()).placeholder(R.drawable.profile_img).into(holder.profileImageView)
 
-//        Log.d("test33","이름:"+ mUsers[position].getUserName())
-//        Log.d("test33","이름:"+ mUsers[position].getProfile())
-//
-//        Log.d("test33","위치: "+position)
-//        Log.d("test33","tsd"+mUsers[0])
-//        Log.d("test33","tsd"+mUsers[1])
-//        Log.d("test33","tsd"+mUsers[2])
-//        Log.d("test33","last!!"+user.toString())
-//        Log.d("test33","last!!"+user.getProfile())
-//        Log.d("test33","last!!"+user.getUserName())
-//        Log.d("test33","last!!"+user.getInstagram())
-
-
-
-        Log.d("test22","user.getPorfile()"+ mUsers[position].getProfile())
-        //Picasso.get().load( mUsers[position].getProfile()).placeholder(R.drawable.profile_img).into(holder.profileImageView)
-        //Log.d("test22","사진 url:"+text)
 
         holder.itemView.setOnClickListener {
             val options = arrayOf<CharSequence>(
-                "Send Message",
-                "Visit Profile"
+                "메세지 보내기",
+                "프로필 보기"
             )
             val builder : AlertDialog.Builder = AlertDialog.Builder(mContext)
             builder.setTitle("What do you want?")
             builder.setItems(options,DialogInterface.OnClickListener{dialog, position ->
                 if(position == 0){
                     val intent = Intent(mContext, MessageChatActivity::class.java)
-                    // 액티비티 프레임에서 제거 (BACK버튼 눌렀을때 되돌아 오지 않도록)
                     intent.putExtra("visit_id",user.getUID())
                     mContext.startActivity(intent)
-
                 }
                 if(position == 1){
 
-
+                // visit profile
 
                 }
             })
+
+            builder.show()
         }
 
     }
 
     class ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView)
     {
-        // 변수 선언
+
         var userNameTxt: TextView
         var profileImageView : CircleImageView
         var onlineImageView: CircleImageView
         var offlineImageView: CircleImageView
-        var lastMessageTxt: TextView   // 최근 메세지 내용
+       // var lastMessageTxt: TextView   // 최근 메세지 내용 <- 메세지 리스트 adapter에 추가
 
-        // 연결 (초기화)
         init{
             userNameTxt = itemView.findViewById(R.id.username)
             profileImageView = itemView.findViewById(R.id.profile_image)
             onlineImageView = itemView.findViewById(R.id.image_online)
             offlineImageView = itemView.findViewById(R.id.image_offline)
-            lastMessageTxt = itemView.findViewById(R.id.message_last)
+        //    lastMessageTxt = itemView.findViewById(R.id.message_last)
         }
     } // end of class ViewHolder
 
