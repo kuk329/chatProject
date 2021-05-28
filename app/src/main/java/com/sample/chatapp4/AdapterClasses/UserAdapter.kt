@@ -51,20 +51,10 @@ class UserAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
 
-        holder.userNameTxt.setText(mUsers.get(position).getUserName())
-
-
-
-        Log.d("adapter","onBindViewHolder")
-        Log.d("dddd",""+mUsers)
         val user: Users = mUsers[position]
-        Log.d("adapter1",""+user)
-//        holder.userNameTxt.text=  mUsers[position]!!.getUserName()
+        holder.userNameTxt.text=  mUsers[position]!!.getUserName()
 
-        Log.d("adapter2",""+user.getUID())
-        Log.d("adapter3",""+user.getUserName())
-        Log.d("mainactivity","2"+user.getUserName())
-        Picasso.get().load(user.getProfile()).placeholder(R.drawable.profile_img).into(holder.profileImageView)
+     //   Picasso.get().load(user.getProfile()).placeholder(R.drawable.profile_img).into(holder.profileImageView)
 
 
         holder.itemView.setOnClickListener {
