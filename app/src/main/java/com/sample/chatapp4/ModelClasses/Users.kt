@@ -78,13 +78,13 @@ class Users
         this.search = search
     }
     fun getFacebook(): String?{
-    return facebook
+        return facebook
     }
     fun setFacebook(facebook:String){
         this.facebook = facebook
     }
     fun getInstagram(): String?{
-    return instagram
+        return instagram
     }
     fun setInstagram(instagram:String){
         this.instagram = instagram

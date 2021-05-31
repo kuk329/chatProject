@@ -48,7 +48,7 @@ class FriendListFragment : Fragment() {
 //    var refUsers : DatabaseReference? = null
 //    var firebaseUser : FirebaseUser? = null
     private  var userAdapter: UserAdapter?= null
-    private var mUsers: List<Users>? = null
+    private var mUsers: ArrayList<Users>? = null
     private var recyclerView : RecyclerView? = null
 
 
@@ -66,17 +66,20 @@ class FriendListFragment : Fragment() {
         recyclerView!!.setHasFixedSize(true)
         recyclerView!!.layoutManager = LinearLayoutManager(context)
 
-
-        mUsers= ArrayList()
-        retrieveAllUsers()
-
       //   setHasOptionsMenu(true)  // 액티비티보다 프래그먼트 메뉴가 우선
-
-
 
         return view
 
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        mUsers= ArrayList()
+        retrieveAllUsers()
+
+        super.onViewCreated(view, savedInstanceState)
+    }
+
     private fun retrieveAllUsers() {
         var firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
         val refUsers = FirebaseDatabase.getInstance("https://messengerapp-45874-default-rtdb.firebaseio.com/").reference.child("Users") // get all users from database
@@ -97,23 +100,21 @@ class FriendListFragment : Fragment() {
                         }
                     }
 
-                    Log.d("error", "mUsers"+mUsers.toString())
-
-                    userAdapter = UserAdapter(context!!, (mUsers as ArrayList<Users>)!!,false)
-
-                    recyclerView!!.adapter = userAdapter
+                    Log.d("error1", "mUsers"+mUsers.toString())
+                    Log.d("error1", "mUsers"+ mUsers!![0].toString())
 
 
+                    userAdapter?.notifyDataSetChanged()
 
             }
             override fun onCancelled(p0: DatabaseError) {
 
             }
         })
-
+        userAdapter = UserAdapter(requireContext(), (mUsers as ArrayList<Users>)!!,false)
+        recyclerView!!.adapter = userAdapter
 
     }
-
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) { // 메뉴 생성

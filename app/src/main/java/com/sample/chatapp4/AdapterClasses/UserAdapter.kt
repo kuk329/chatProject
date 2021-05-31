@@ -22,7 +22,7 @@ class UserAdapter(
     mContext: Context,
     mUsers: ArrayList<Users>,
     isChatCheck : Boolean
-    ) : RecyclerView.Adapter<UserAdapter.ViewHolder?>()
+) : RecyclerView.Adapter<UserAdapter.ViewHolder?>()
 {
     private val mContext:Context
     private val mUsers : List<Users>
@@ -54,7 +54,7 @@ class UserAdapter(
         val user: Users = mUsers[position]
         holder.userNameTxt.text=  mUsers[position]!!.getUserName()
 
-     //   Picasso.get().load(user.getProfile()).placeholder(R.drawable.profile_img).into(holder.profileImageView)
+        //   Picasso.get().load(user.getProfile()).placeholder(R.drawable.profile_img).into(holder.profileImageView)
 
 
         holder.itemView.setOnClickListener {
@@ -72,7 +72,7 @@ class UserAdapter(
                 }
                 if(position == 1){
 
-                // visit profile
+                    // visit profile
 
                 }
             })
@@ -89,19 +89,18 @@ class UserAdapter(
         var profileImageView : CircleImageView
         var onlineImageView: CircleImageView
         var offlineImageView: CircleImageView
-       // var lastMessageTxt: TextView   // 최근 메세지 내용 <- 메세지 리스트 adapter에 추가
+        // var lastMessageTxt: TextView   // 최근 메세지 내용 <- 메세지 리스트 adapter에 추가
 
         init{
             userNameTxt = itemView.findViewById(R.id.username)
             profileImageView = itemView.findViewById(R.id.profile_image)
             onlineImageView = itemView.findViewById(R.id.image_online)
             offlineImageView = itemView.findViewById(R.id.image_offline)
-        //    lastMessageTxt = itemView.findViewById(R.id.message_last)
+            //    lastMessageTxt = itemView.findViewById(R.id.message_last)
         }
     } // end of class ViewHolder
 
 }// end of class UserAdpater
-
 
 
 
