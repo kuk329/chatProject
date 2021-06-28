@@ -68,9 +68,9 @@ class SettingProfileFragment : Fragment() { // 내 계정 설정 페이지
                     val user : Users? = p0.getValue(Users::class.java)
 
                     if(context!=null){
-                        view.username_setting.text = user!!.getUserName()
-                        Picasso.get().load(user.getProfile()).into(view.profile_image_setting)
-                        Picasso.get().load(user.getCover()).into(view.cover_image_setting)
+                        view.username_setting.text = user!!.username
+                        Picasso.get().load(user.profile).into(view.profile_image_setting)
+                        Picasso.get().load(user.cover).into(view.cover_image_setting)
                     }
                 }
             }

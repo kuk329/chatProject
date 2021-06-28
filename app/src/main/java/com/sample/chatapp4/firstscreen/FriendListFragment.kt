@@ -23,6 +23,7 @@ import android.util.Log
 import android.view.*
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -30,6 +31,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+//import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
@@ -38,6 +40,10 @@ import com.sample.chatapp4.ModelClasses.Users
 import com.sample.chatapp4.R
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_friend_list.view.*
+import kotlinx.android.synthetic.main.list_friend_item.view.*
+import kotlinx.android.synthetic.main.list_friend_item.view.profile_image
+import kotlinx.android.synthetic.main.list_friend_item.view.username
+import kotlinx.android.synthetic.main.user_search_item.view.*
 
 
 /**
@@ -49,12 +55,7 @@ class FriendListFragment : Fragment() {
 //    var firebaseUser : FirebaseUser? = null
     private  var userAdapter: UserAdapter?= null
     private var mUsers: ArrayList<Users>? = null
-    private var recyclerView : RecyclerView? = null
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {// 프래그먼트를 생성하면서 초기화 해야하는 리소스 값이나 넘겨준 값들
-        super.onCreate(savedInstanceState)
-    }
+    //private var recyclerView : RecyclerView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -62,70 +63,111 @@ class FriendListFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_friend_list, container, false)
 
 
-        recyclerView = view.findViewById(R.id.recycler_friend_list)
-        recyclerView!!.setHasFixedSize(true)
-        recyclerView!!.layoutManager = LinearLayoutManager(context)
+        view.recycler_friend_list.adapter = FriendListRecyclerViewAdapter()
+        view.recycler_friend_list.layoutManager= LinearLayoutManager(activity)
+//        recyclerView = view.findViewById(R.id.recycler_friend_list)
+//        recyclerView!!.setHasFixedSize(true)
+//        recyclerView!!.layoutManager = LinearLayoutManager(context)
 
-      //   setHasOptionsMenu(true)  // 액티비티보다 프래그먼트 메뉴가 우선
 
         return view
-
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        mUsers= ArrayList()
-        retrieveAllUsers()
-
-        super.onViewCreated(view, savedInstanceState)
-    }
-
-    private fun retrieveAllUsers() {
-        var firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
-        val refUsers = FirebaseDatabase.getInstance("https://messengerapp-45874-default-rtdb.firebaseio.com/").reference.child("Users") // get all users from database
-  //      val refUsers = FirebaseDatabase.getInstance().reference.child("Users")
-
-        refUsers.addValueEventListener(object: ValueEventListener
-        {
-            override fun onDataChange(p0: DataSnapshot)
+    inner class FriendListRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+        var users : ArrayList<Users> = arrayListOf()
+        init {
+            var firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
+            val refUsers = FirebaseDatabase.getInstance("https://messengerapp-45874-default-rtdb.firebaseio.com/").reference.child("Users") // get all users from database
+            refUsers.addValueEventListener(object: ValueEventListener
             {
-                (mUsers as ArrayList<Users>).clear()
-
+                override fun onDataChange(p0: DataSnapshot)
+                {
+                    users.clear()
                     for(snapshot in p0.children)
                     {
-                        val user: Users? = p0.getValue(Users::class.java)
-                        if(!(user!!.getUID()).equals(firebaseUserID)) // except me
+                        val item = snapshot.getValue(Users::class.java)
+                        if(!(item!!.uid).equals(firebaseUserID)) // except me
                         {
-                            (mUsers as ArrayList<Users>).add(user)
+                            users.add(item)
                         }
                     }
+                    notifyDataSetChanged()
+                }
+                override fun onCancelled(p0: DatabaseError) {
+                }
+            })
 
-                    Log.d("error1", "mUsers"+mUsers.toString())
-                    Log.d("error1", "mUsers"+ mUsers!![0].toString())
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            var view = LayoutInflater.from(parent.context).inflate(R.layout.list_friend_item,parent,false)
+            return CustomViewHolder(view)
+
+        }
+        inner class CustomViewHolder(view:View): RecyclerView.ViewHolder(view)
+
+        override fun getItemCount(): Int {
+            return users.size
+        }
 
 
-                    userAdapter?.notifyDataSetChanged()
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            // 넘어온 데이터들 mapping
+            var viewholder = (holder as CustomViewHolder).itemView
 
-            }
-            override fun onCancelled(p0: DatabaseError) {
+            // UserId
+            viewholder.username.text = users[position].username
 
-            }
-        })
-        userAdapter = UserAdapter(requireContext(), (mUsers as ArrayList<Users>)!!,false)
-        recyclerView!!.adapter = userAdapter
+
+            // Image
+            //Glide.with(holder.itemView.context).load(users[position].profile).into(viewholder.profile_image)
+            Picasso.get().load(users[position].profile).placeholder(R.drawable.profile_img).into(viewholder.profile_image)
+        }
+
 
     }
 
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) { // 메뉴 생성
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater?.inflate(R.menu.search_menu,menu) // 메뉴 연결
-    }
+//
+//    private fun retrieveAllUsers() {
+//        var firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
+//        val refUsers = FirebaseDatabase.getInstance("https://messengerapp-45874-default-rtdb.firebaseio.com/").reference.child("Users") // get all users from database
+//
+//        refUsers.addValueEventListener(object: ValueEventListener
+//        {
+//            override fun onDataChange(p0: DataSnapshot)
+//            {
+//                (mUsers as ArrayList<Users>).clear()
+//
+//                    for(snapshot in p0.children)
+//                    {
+//                        val user: Users? = p0.getValue(Users::class.java)
+//                        if(!(user!!.getUID()).equals(firebaseUserID)) // except me
+//                        {
+//                            (mUsers as ArrayList<Users>).add(user)
+//                        }
+//                    }
+//                    userAdapter?.notifyDataSetChanged()
+//            }
+//            override fun onCancelled(p0: DatabaseError) {
+//            }
+//        })
+//        userAdapter = UserAdapter(requireContext(), (mUsers as ArrayList<Users>)!!,false)
+//        recyclerView!!.adapter = userAdapter
+//        Log.d("테스트","2")
+//
+//    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean { // 메뉴가 선택됬을때 NavigationUI를 이용해 id가 동일한 navigation 메뉴로 이동
-        return NavigationUI.onNavDestinationSelected(item!!,
-            requireView().findNavController())||super.onOptionsItemSelected(item)
-    }
+
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) { // 메뉴 생성
+//        super.onCreateOptionsMenu(menu, inflater)
+//        inflater?.inflate(R.menu.search_menu,menu) // 메뉴 연결
+//    }
+//
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean { // 메뉴가 선택됬을때 NavigationUI를 이용해 id가 동일한 navigation 메뉴로 이동
+//        return NavigationUI.onNavDestinationSelected(item!!,
+//            requireView().findNavController())||super.onOptionsItemSelected(item)
+//    }
 }
 
 

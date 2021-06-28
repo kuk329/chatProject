@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
                     val user: Users? = p0.getValue(Users::class.java)
                     Log.d("mainactivity",""+user)
                     if (user != null) {
-                        Log.d("mainactivity","1"+user.getUserName())
+                        Log.d("mainactivity","1"+user.username)
                     }
 
 

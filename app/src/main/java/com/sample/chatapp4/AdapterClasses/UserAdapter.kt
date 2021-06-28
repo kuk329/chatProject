@@ -38,7 +38,6 @@ class UserAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view: View = LayoutInflater.from(mContext).inflate(R.layout.list_friend_item,parent,false)
         Log.d("adapter","onCreateViewHolder")
-
         return ViewHolder(view)
     }
 
@@ -52,9 +51,10 @@ class UserAdapter(
 
 
         val user: Users = mUsers[position]
-        holder.userNameTxt.text=  mUsers[position]!!.getUserName()
+       // holder.userNameTxt.text=  user!!.getUserName()
+        //holder.userNameTxt.text=  "친구이름넣는곳"
 
-        //   Picasso.get().load(user.getProfile()).placeholder(R.drawable.profile_img).into(holder.profileImageView)
+       // Picasso.get().load(user.getProfile()).placeholder(R.drawable.profile_img).into(holder.profileImageView)
 
 
         holder.itemView.setOnClickListener {
@@ -67,7 +67,7 @@ class UserAdapter(
             builder.setItems(options,DialogInterface.OnClickListener{dialog, position ->
                 if(position == 0){
                     val intent = Intent(mContext, MessageChatActivity::class.java)
-                    intent.putExtra("visit_id",user.getUID())
+                  //  intent.putExtra("visit_id",user.getUID())
                     mContext.startActivity(intent)
                 }
                 if(position == 1){

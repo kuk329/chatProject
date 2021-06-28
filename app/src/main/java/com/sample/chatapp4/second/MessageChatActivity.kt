@@ -41,8 +41,8 @@ class MessageChatActivity:AppCompatActivity(){
         reference.addValueEventListener(object:ValueEventListener{
             override fun onDataChange(p0: DataSnapshot) {
                val user: Users? = p0.getValue(Users::class.java)
-                username_mchat.text = user!!.getUserName()
-                Picasso.get().load(user.getProfile()).into(profile_image_mchat)
+                username_mchat.text = user?.username
+                Picasso.get().load(user?.profile).into(profile_image_mchat)
             }
 
             override fun onCancelled(p0: DatabaseError) {
