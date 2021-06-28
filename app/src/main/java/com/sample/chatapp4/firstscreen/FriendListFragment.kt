@@ -16,6 +16,9 @@
 
 package com.sample.chatapp4.firstscreen
 
+import android.app.AlertDialog
+import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -36,14 +39,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.sample.chatapp4.AdapterClasses.UserAdapter
+import com.sample.chatapp4.MainActivity
 import com.sample.chatapp4.ModelClasses.Users
 import com.sample.chatapp4.R
+import com.sample.chatapp4.second.MessageChatActivity
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_friend_list.view.*
 import kotlinx.android.synthetic.main.list_friend_item.view.*
 import kotlinx.android.synthetic.main.list_friend_item.view.profile_image
 import kotlinx.android.synthetic.main.list_friend_item.view.username
-import kotlinx.android.synthetic.main.user_search_item.view.*
 
 
 /**
@@ -114,18 +118,48 @@ class FriendListFragment : Fragment() {
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             // 넘어온 데이터들 mapping
             var viewholder = (holder as CustomViewHolder).itemView
+            val user = users[position]
 
             // UserId
-            viewholder.username.text = users[position].username
+           // viewholder.username.text = users[position].username
+            viewholder.username.text = user.username
 
 
             // Image
             //Glide.with(holder.itemView.context).load(users[position].profile).into(viewholder.profile_image)
-            Picasso.get().load(users[position].profile).placeholder(R.drawable.profile_img).into(viewholder.profile_image)
+           // Picasso.get().load(users[position].profile).placeholder(R.drawable.profile_img).into(viewholder.profile_image)
+            Picasso.get().load(user.profile).placeholder(R.drawable.profile_img).into(viewholder.profile_image)
+
+            viewholder.setOnClickListener {
+                Log.d("click","클릭함")
+                val options = arrayOf<CharSequence>(
+                    "메세지 보내기",
+                    "프로필 보기"
+                )
+                val builder : AlertDialog.Builder = AlertDialog.Builder(context)
+                builder.setTitle("무엇을 하시겠습니까?")
+                builder.setItems(options,DialogInterface.OnClickListener{ dialog, position ->
+
+                  if(position == 0){
+                      val intent = Intent(context,MessageChatActivity::class.java)
+                      intent.putExtra("visit_id",user.uid) // 클릭한 친구 id값 넘김
+                      val test = viewholder.username.text
+                      val test2 = user.uid
+                      Log.d("test"," 현재 클릭한 친구 이름 : $test")
+                      Log.d("test"," 현재 클릭한 친구 아이디 : $test2")
+                      context?.startActivity(intent)
+
+                  }
+                   if (position == 1){
+
+
+                   }
+                })
+                builder.show()
+            }
         }
 
-
-    }
+    } // end of inner class
 
 
 //

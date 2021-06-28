@@ -62,9 +62,9 @@ class RegisterActivity : AppCompatActivity() {
                     {
                         Log.d("tag","db 생성 성공")
                         firebaseUserID = mAuth.currentUser!!.uid
-                        Log.d("tag",firebaseUserID)
+                        //Log.d("tag",firebaseUserID)
                         refUsers = FirebaseDatabase.getInstance("https://messengerapp-45874-default-rtdb.firebaseio.com/").reference.child("Users").child(firebaseUserID)
-                        Log.d("tag","db에서 해당 유저의 정보 가져옴")
+                       // Log.d("tag","db에서 해당 유저의 정보 가져옴")
                         val userHashMap = HashMap<String,Any>()
                         userHashMap["uid"] = firebaseUserID
                         userHashMap["username"] = username

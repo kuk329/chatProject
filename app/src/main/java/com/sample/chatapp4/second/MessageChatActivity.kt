@@ -26,17 +26,21 @@ import kotlinx.android.synthetic.main.activity_message_chat.*
 
 class MessageChatActivity:AppCompatActivity(){
 
-    var userIdVisit : String = ""  // 상대방
+
+    var userIdVisit : String = ""  // 상대방(프로필 클릭시)
     var firebaseUser : FirebaseUser?= null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message_chat)
 
         intent = intent
-        userIdVisit = intent.getStringExtra("visit_id")!!
-        firebaseUser = FirebaseAuth.getInstance().currentUser
+        userIdVisit = intent.getStringExtra("visit_id")!! // 상대방 id
+        firebaseUser = FirebaseAuth.getInstance().currentUser // 내 정보 가져옴(로그인한 사용자)
 
-        val reference = FirebaseDatabase.getInstance().reference
+
+        // 상단 사용자 표시하는 코드
+        val reference = FirebaseDatabase.getInstance("https://messengerapp-45874-default-rtdb.firebaseio.com/").reference
             .child("Users").child(userIdVisit)
         reference.addValueEventListener(object:ValueEventListener{
             override fun onDataChange(p0: DataSnapshot) {
@@ -50,15 +54,22 @@ class MessageChatActivity:AppCompatActivity(){
             }
         })
 
+
+
+
+        // send message button click
         send_message_btn.setOnClickListener{
             val message = text_message.text.toString() // 입력한 메세지 받아와서 message 변수에 저장
+
             if(message==""){ // 메세지 칸이 비었을때
                 Toast.makeText(this@MessageChatActivity,"메세지를 입력해 주세요 ",Toast.LENGTH_LONG).show()
             }else{
+                // sendMessageToUser  함수실행 -> 내 아이디, 상대방 아이디, 메세지 내용 넘김
                 sendMessageToUser(firebaseUser!!.uid,userIdVisit,message)
             }
             text_message.setText("")
         }
+        // 사진 첨부 button click
         attach_image_file_btn.setOnClickListener{
             val intent = Intent()
             intent.action = Intent.ACTION_GET_CONTENT
@@ -69,65 +80,67 @@ class MessageChatActivity:AppCompatActivity(){
 
     private fun sendMessageToUser(senderId: String, receiverId: String, message: String) {
 
-        val reference = FirebaseDatabase.getInstance().reference
+        val reference = FirebaseDatabase.getInstance("https://messengerapp-45874-default-rtdb.firebaseio.com/").reference
         val messageKey = reference.push().key
 
         val messageHashMap = HashMap<String,Any?>()
         messageHashMap["sender"] = senderId
         messageHashMap["message"] = message
         messageHashMap["receiver"] = receiverId
-        messageHashMap["isseen"] = false
-        messageHashMap["url"] = ""
-        messageHashMap["messageId"] = messageKey
+        messageHashMap["isseen"] = false  // 메시지를 읽었는지 확인
+        messageHashMap["url"] = ""  // 이미지
+        messageHashMap["messageId"] = messageKey // 메세지들 구별 id
         reference.child("Chats")
             .child(messageKey!!)
             .setValue(messageHashMap)
             .addOnCompleteListener{task ->
                 if(task.isSuccessful)
                 {
-                    val chatsListReference = FirebaseDatabase.getInstance()
+                    val chatsListReference = FirebaseDatabase.getInstance("https://messengerapp-45874-default-rtdb.firebaseio.com/")
                         .reference
-                        .child("ChatLists")
+                        .child("ChatList")
                         .child(firebaseUser!!.uid)
                         .child(userIdVisit)
 
                     chatsListReference.addListenerForSingleValueEvent(object:ValueEventListener{
 
                         override fun onDataChange(p0: DataSnapshot) {
-                            if(p0.exists()){
+                            if(!p0.exists()){
 
                                 chatsListReference.child("id").setValue(userIdVisit)
                             }
-                            val chatsListReceiverRef = FirebaseDatabase.getInstance()
+
+                            val chatsListReceiverRef = FirebaseDatabase.getInstance("https://messengerapp-45874-default-rtdb.firebaseio.com/")
                                 .reference
-                                .child("ChatLists")
+                                .child("ChatList")
                                 .child(userIdVisit)
                                 .child(firebaseUser!!.uid)
                             chatsListReceiverRef.child("id").setValue(firebaseUser!!.uid)
                         }
+
                         override fun onCancelled(p0: DatabaseError) {
                         }
                     })
 
-
-
-                    val reference = FirebaseDatabase.getInstance().reference
+                    // push notifications using fcm
+                    val reference = FirebaseDatabase.getInstance("https://messengerapp-45874-default-rtdb.firebaseio.com/").reference
                         .child("Users").child(firebaseUser!!.uid)
                 }
-
             }
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(requestCode==438&& resultCode ==RESULT_OK && data!=null && data!!.data!= null){
+        if(requestCode==438&& resultCode ==RESULT_OK && data!=null && data!!.data!= null)
+        {
             val progressBar = ProgressDialog(this)
-            progressBar.setMessage("이미지가 업로드 중입니다. 기다려주세요")
+            progressBar.setMessage("이미지 전송중입니다... ")
             progressBar.show()
 
             val fileUri = data.data
-            val storageReference = FirebaseStorage.getInstance().reference.child("Chat Images")
+            val storageReference = FirebaseStorage.getInstance("https://messengerapp-45874-default-rtdb.firebaseio.com/").reference.child("Chat Images")
             val ref = FirebaseDatabase.getInstance().reference
             val messageId = ref.push().key
             val filePath = storageReference.child("$messageId.jpg")
@@ -150,7 +163,7 @@ class MessageChatActivity:AppCompatActivity(){
 
                     val messageHashMap = HashMap<String,Any?>()
                     messageHashMap["sender"] = firebaseUser!!.uid
-                    messageHashMap["message"] = "이미지 파일 보냄"
+                    messageHashMap["message"] = "사진 보냈습니다."
                     messageHashMap["receiver"] = userIdVisit
                     messageHashMap["isseen"] = false
                     messageHashMap["url"] = url
