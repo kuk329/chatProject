@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -19,6 +21,8 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
+import com.sample.chatapp4.AdapterClasses.ChatsAdapter
+import com.sample.chatapp4.ModelClasses.Chat
 import com.sample.chatapp4.ModelClasses.Users
 import com.sample.chatapp4.R
 import com.squareup.picasso.Picasso
@@ -29,6 +33,10 @@ class MessageChatActivity:AppCompatActivity(){
 
     var userIdVisit : String = ""  // 상대방(프로필 클릭시)
     var firebaseUser : FirebaseUser?= null
+    var chatsAdapter: ChatsAdapter? = null
+    var mChatList: List<Chat>? = null
+    lateinit var  recycler_view_chats : RecyclerView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +45,12 @@ class MessageChatActivity:AppCompatActivity(){
         intent = intent
         userIdVisit = intent.getStringExtra("visit_id")!! // 상대방 id
         firebaseUser = FirebaseAuth.getInstance().currentUser // 내 정보 가져옴(로그인한 사용자)
+
+        recycler_view_chats = findViewById(R.id.recycler_view_chats)
+        recycler_view_chats.setHasFixedSize(true)
+        var linearLayoutManager = LinearLayoutManager(applicationContext)
+        linearLayoutManager.stackFromEnd = true
+        recycler_view_chats.layoutManager = linearLayoutManager
 
 
         // 상단 사용자 표시하는 코드
@@ -47,6 +61,8 @@ class MessageChatActivity:AppCompatActivity(){
                val user: Users? = p0.getValue(Users::class.java)
                 username_mchat.text = user?.username
                 Picasso.get().load(user?.profile).into(profile_image_mchat)
+
+                retrieveMessages(firebaseUser!!.uid,userIdVisit,user?.profile)
             }
 
             override fun onCancelled(p0: DatabaseError) {
@@ -77,6 +93,7 @@ class MessageChatActivity:AppCompatActivity(){
             startActivityForResult(Intent.createChooser(intent,"이미지를 골라주세요"),438)
         }
     }
+
 
     private fun sendMessageToUser(senderId: String, receiverId: String, message: String) {
 
@@ -140,8 +157,8 @@ class MessageChatActivity:AppCompatActivity(){
             progressBar.show()
 
             val fileUri = data.data
-            val storageReference = FirebaseStorage.getInstance("https://messengerapp-45874-default-rtdb.firebaseio.com/").reference.child("Chat Images")
-            val ref = FirebaseDatabase.getInstance().reference
+            val storageReference = FirebaseStorage.getInstance().reference.child("Chat Images")
+            val ref = FirebaseDatabase.getInstance("https://messengerapp-45874-default-rtdb.firebaseio.com/").reference
             val messageId = ref.push().key
             val filePath = storageReference.child("$messageId.jpg")
 
@@ -163,7 +180,7 @@ class MessageChatActivity:AppCompatActivity(){
 
                     val messageHashMap = HashMap<String,Any?>()
                     messageHashMap["sender"] = firebaseUser!!.uid
-                    messageHashMap["message"] = "사진 보냈습니다."
+                    messageHashMap["message"] = "sent you an image"
                     messageHashMap["receiver"] = userIdVisit
                     messageHashMap["isseen"] = false
                     messageHashMap["url"] = url
@@ -171,12 +188,45 @@ class MessageChatActivity:AppCompatActivity(){
 
                     ref.child("Chats").child(messageId!!).setValue(messageHashMap)
 
+                    progressBar.dismiss()
 
                 }
             }
 
 
         }
+
+    }
+    private fun retrieveMessages(senderId: String, receiverId: String, receiverImageUrl: String?)
+    {
+        mChatList = ArrayList()
+        val reference = FirebaseDatabase.getInstance("https://messengerapp-45874-default-rtdb.firebaseio.com/")
+            .reference.child("Chats")
+
+        reference.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(p0: DataSnapshot) {
+                (mChatList as ArrayList<Chat>).clear()
+                for(snapshot in p0.children){
+                    val chat = snapshot.getValue(Chat::class.java)
+
+                    if(chat!!.receiver.equals(senderId) && chat.sender.equals(receiverId)
+                        || chat.receiver.equals(receiverId)&& chat.sender.equals(senderId)){
+                        (mChatList as ArrayList<Chat>).add(chat)
+                    }
+                    chatsAdapter = ChatsAdapter(this@MessageChatActivity,(mChatList as ArrayList<Chat>),
+                    receiverImageUrl!!)
+
+                    recycler_view_chats.adapter = chatsAdapter
+
+
+                }
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+
 
     }
 

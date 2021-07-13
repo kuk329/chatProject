@@ -26,7 +26,7 @@ import androidx.fragment.app.Fragment
 
 
 import com.sample.chatapp4.R
-import com.sample.chatapp4.second.MyAdapter.Companion.USERNAME_KEY
+
 
 
 /**
@@ -40,8 +40,6 @@ class ChatRoomFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_chat_room, container, false)
 
-        val name = arguments?.getString(USERNAME_KEY) ?: "Ali Connors"
-        //view.findViewById<TextView>(R.id.profile_user_name).text = name
         return view
     }
 }// x

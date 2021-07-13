@@ -21,82 +21,99 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.activity.result.ActivityResultRegistry
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.sample.chatapp4.AdapterClasses.UserAdapter
+import com.sample.chatapp4.ModelClasses.Chatlist
+import com.sample.chatapp4.ModelClasses.Users
 import com.sample.chatapp4.R
 
 
-/**
- * Shows a static leaderboard with multiple users.
- */
+// 메세지 목록
 class ChatListFragment : Fragment() {
+
+    private var userAdapter : UserAdapter? = null
+    private var mUsers : List<Users>? = null
+    private var usersChatList : List<Chatlist>? = null
+    lateinit var recycler_view_chatlist : RecyclerView
+    private var firebaseUser : FirebaseUser? = null
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_chat_list, container, false)
 
-        val viewAdapter = MyAdapter(Array(10) { "채팅 ${it + 1}" })
+        val view =  inflater.inflate(R.layout.fragment_chat_list, container, false)
 
-        view.findViewById<RecyclerView>(R.id.leaderboard_list).run {
+        recycler_view_chatlist = view.findViewById(R.id.recycler_view_chatlist)
+        recycler_view_chatlist.setHasFixedSize(true)
+        recycler_view_chatlist.layoutManager = LinearLayoutManager(context)
 
-            setHasFixedSize(true)
+        firebaseUser = FirebaseAuth.getInstance().currentUser
 
-            // specify an viewAdapter (see also next example)
-            adapter = viewAdapter
+        usersChatList = ArrayList()
 
-        }
+        val ref = FirebaseDatabase.getInstance("https://messengerapp-45874-default-rtdb.firebaseio.com/").reference.child("ChatList")
+            .child(firebaseUser!!.uid)
+
+        ref!!.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(p0: DataSnapshot) {
+                (usersChatList as ArrayList).clear()
+
+                for(dataSnapshot in p0.children)
+                {
+                    val chatlist = dataSnapshot.getValue(Chatlist::class.java)
+
+                    (usersChatList as ArrayList).add(chatlist!!)
+                }
+                retrieveChatLists()
+            }
+            override fun onCancelled(p0: DatabaseError) {
+            }
+        })
+
         return view
+
     }
+    private fun retrieveChatLists(){
+        mUsers = ArrayList()
 
-}
+        val ref = FirebaseDatabase.getInstance("https://messengerapp-45874-default-rtdb.firebaseio.com/").reference.child("Users")
+        ref!!.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(p0: DataSnapshot) {
+                (mUsers as ArrayList).clear()
 
-class MyAdapter(private val myDataset: Array<String>) :
-    RecyclerView.Adapter<MyAdapter.ViewHolder2>() {
+                for(dataSnapshot in p0.children){
+                    val user = dataSnapshot.getValue(Users::class.java)
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder.
-    // Each data item is just a string in this case that is shown in a TextView.
-    class ViewHolder2(val item: View) : RecyclerView.ViewHolder(item)
+                    for(eachChatList in usersChatList!!)
+                    {
+                         if(user!!.uid.equals(eachChatList.getId()))
+                         {
+                             (mUsers as ArrayList).add(user!!)
+                         }
+                    }
+                }
 
+                userAdapter = UserAdapter(context!!,(mUsers as ArrayList<Users>),true)
+                recycler_view_chatlist.adapter = userAdapter
+            }
 
-    // Create new views (invoked by the layout manager)
-    override fun onCreateViewHolder(parent: ViewGroup,
-                                    viewType: Int): ViewHolder2 {
-        // create a new view
-        val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.list_view_item, parent, false)
+            override fun onCancelled(p0: DatabaseError) {
 
+            }
+        })
 
-        return ViewHolder2(itemView)
-    }
-
-    // Replace the contents of a view (invoked by the layout manager)
-    override fun onBindViewHolder(holder: ViewHolder2, position: Int) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-        holder.item.findViewById<TextView>(R.id.user_name_text).text = myDataset[position]
-
-//        holder.item.findViewById<ImageView>(R.id.user_avatar_image)
-//                .setImageResource(listOfAvatars[position % listOfAvatars.size])
-
-        holder.item.setOnClickListener {
-            val bundle = bundleOf(USERNAME_KEY to myDataset[position])
-
-            holder.item.findNavController().navigate(
-                    R.id.action_chatListScreen_to_ChatRoomScreen,
-                bundle)
-        }
-    }
-
-    // Return the size of your dataset (invoked by the layout manager)
-    override fun getItemCount() = myDataset.size
-
-    companion object {
-        const val USERNAME_KEY = "userName"
     }
 }
+
 

@@ -12,6 +12,7 @@ android {
         dataBinding true
     }
 
+
     defaultConfig {
         applicationId "com.sample.chatapp4"
         minSdkVersion 19
