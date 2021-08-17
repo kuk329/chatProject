@@ -81,7 +81,7 @@ class ChatsAdapter(
 
             if(chat.isseen){
 
-                holder.text_seen!!.text = "Seen"
+                holder.text_seen!!.text = "읽음"
                 if(chat.message.equals("sent you an image") && !chat.url.equals("")){
                     val lp : RelativeLayout.LayoutParams? = holder.text_seen!!.layoutParams as RelativeLayout.LayoutParams?
                     lp!!.setMargins(0,245,10,0)
@@ -89,7 +89,7 @@ class ChatsAdapter(
             }
 
             }else{
-                holder.text_seen!!.text = "Sent"
+                holder.text_seen!!.text = "보냄"
                 if(chat.message.equals("sent you an image") && !chat.url.equals("")){
                     val lp : RelativeLayout.LayoutParams? = holder.text_seen!!.layoutParams as RelativeLayout.LayoutParams?
                     lp!!.setMargins(0,245,10,0)

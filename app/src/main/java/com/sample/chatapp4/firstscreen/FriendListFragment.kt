@@ -50,9 +50,6 @@ import kotlinx.android.synthetic.main.list_friend_item.view.profile_image
 import kotlinx.android.synthetic.main.list_friend_item.view.username
 
 
-/**
- * Shows the main title screen with a button that navigates to [FriendProfileFragment].
- */
 class FriendListFragment : Fragment() {
 
 //    var refUsers : DatabaseReference? = null
@@ -69,11 +66,6 @@ class FriendListFragment : Fragment() {
 
         view.recycler_friend_list.adapter = FriendListRecyclerViewAdapter()
         view.recycler_friend_list.layoutManager= LinearLayoutManager(activity)
-//        recyclerView = view.findViewById(R.id.recycler_friend_list)
-//        recyclerView!!.setHasFixedSize(true)
-//        recyclerView!!.layoutManager = LinearLayoutManager(context)
-
-
         return view
     }
 

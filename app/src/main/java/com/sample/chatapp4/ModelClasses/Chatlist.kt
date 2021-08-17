@@ -1,6 +1,6 @@
 package com.sample.chatapp4.ModelClasses
 
-class Chatlist {
+class Chatlist { // 채팅 목록을 나타낼
 
     private var id: String = ""
 
